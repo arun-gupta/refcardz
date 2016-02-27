@@ -1,0 +1,49 @@
+= Kubernetes Refcardz
+:toc:
+:toc-placement!:
+
+toc::[]
+
+Kubernetes is an open source orchestration system for managing containerized applications across multiple hosts, providing basic mechanisms for deployment, maintenance, and scaling of applications.
+
+Docker provides the lifecycle management of containers. A Docker image defines a build time representation of the runtime containers. There are commands to start, stop, restart, and perform other lifecycle methods on these containers. Kubernetes uses Docker to package, instantiate, and run containerized applications.
+
+== Key Concepts
+
+Node
+
+Pod
+
+Replication Controller
+
+Service
+
+Label
+
+== Getting Started with Kubernetes
+
+Vagrant
+Start the cluster
+Kubectl script
+
+Several options are available but the most common ones are GCE, AWS, Azure
+
+== Run your first Docker container
+
+== Kubernetes Configuration File
+
+== Scale Applications
+
+== Connecting Containers using Service
+
+== Volumes
+
+== Health Check
+
+== Debugging
+
+== About the Author
+
+Arun Gupta is the vice president of developer advocacy at Couchbase. He has been building developer communities for 10+ years at Sun, Oracle, and Red Hat. He has deep expertise in leading cross-functional teams to develop and execute strategy, planning and execution of content, marketing campaigns, and programs. Prior to that he led engineering teams at Sun and is a founding member of the Java EE team.
+
+Gupta has authored more than 2,000 blog posts on technology. He has extensive speaking experience in more than 40 countries on myriad topics and is a JavaOne Rock Star. Gupta also founded the Devoxx4Kids chapter in the US and continues to promote technology education among children. An author of a best-selling book, an avid runner, a globe trotter, a Java Champion, and a JUG leader, he is easily accessible at @arungupta.
