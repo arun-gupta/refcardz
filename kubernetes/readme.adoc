@@ -6,19 +6,43 @@ toc::[]
 
 Kubernetes is an open source orchestration system for managing containerized applications across multiple hosts, providing basic mechanisms for deployment, maintenance, and scaling of applications.
 
-Docker provides the lifecycle management of containers. A Docker image defines a build time representation of the runtime containers. There are commands to start, stop, restart, and perform other lifecycle methods on these containers. Kubernetes uses Docker to package, instantiate, and run containerized applications.
+Kubernetes, or "`k8s`" in short, allows the user to provide declarative primitives for the desired state, for example “need 3 Couchbase servers running”. Kubernetes self-healing mechanisms, such as auto-restarting, re-scheduling, and replicating containers then ensure that this state is met.
+
+Kubernetes supports Docker and Rocket containers, and other container image formats and container runtimes will be supported in the future.
 
 == Key Concepts
 
-Node
+*Cluster*: A Kubernetes cluster is a set of physical or virtual machines and other infrastructure resources that are used running your applications. The machines that manage the cluster are called _Master_ and the machines that run the containers are called _Worker_.
 
-Pod
+*Master*: A master is the central control point that provides a unified view of the cluster. Multiple masters can be setup to create a high-availability cluster.
+
+*Node* (nee "`minion`"): A node is a physical or virtual machine running Kubernetes, onto which pods can be scheduled.
+
+*Pod*: A Pod is the smallest deployable units that can be created, scheduled, and managed. Its a logical collection of containers that belong to an application.
+
+Each resource in Kubernetes is defined using a configuration file. For example, a Couchbase pod might be defined as:
+
+[source, text]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: couchbase
+spec:
+  containers:
+  - name: couchbase
+    image: couchbase
+    ports:
+    - containerPort: 8091
+----
 
 Replication Controller
 
 Service
 
 Label
+
+Kubectl CLI
 
 == Getting Started with Kubernetes
 
