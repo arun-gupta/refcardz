@@ -12,13 +12,21 @@ Kubernetes supports Docker and Rocket containers, and other container image form
 
 == Key Concepts
 
-*Cluster*: A Kubernetes cluster is a set of physical or virtual machines and other infrastructure resources that are used running your applications. The machines that manage the cluster are called _Master_ and the machines that run the containers are called _Worker_.
+=== Cluster
 
-*Master*: A master is the central control point that provides a unified view of the cluster. Multiple masters can be setup to create a high-availability cluster.
+A Kubernetes cluster is a set of physical or virtual machines and other infrastructure resources that are used running your applications. The machines that manage the cluster are called _Master_ and the machines that run the containers are called _Worker_.
 
-*Worker* (nee "`minion`"): A node is worker node that run tasks as delegated by the master. Node can run one or more pods.
+=== Master Node
 
-*Pod*: A Pod is the smallest deployable units that can be created, scheduled, and managed. Its a logical collection of containers that belong to an application.
+A master is the central control point that provides a unified view of the cluster. Multiple masters can be setup to create a high-availability cluster.
+
+=== Worker Node
+
+ A node is worker node that run tasks as delegated by the master. Node can run one or more pods.
+
+=== Pod
+
+A Pod is the smallest deployable units that can be created, scheduled, and managed. Its a logical collection of containers that belong to an application.
 
 Each resource in Kubernetes is defined using a configuration file. For example, a Couchbase pod can be defined as:
 
@@ -38,17 +46,23 @@ spec:
     - containerPort: 8091
 ----
 
-*Kubelet*: Each node, master or worker, runs a service that allows to run containers and be managed from the master. It reads container manifests as YAML or JSON files that describes a Pod. Kubelet ensures that the containers defined in the pods are started and continue running.
+=== Kubelet
 
-Kubelet is a Kubernetes-internal concept and generally does not require direct interaction.
+Each node, master or worker, runs a service that allows to run containers and be managed from the master. It reads container manifests as YAML or JSON files that describes a Pod. A typical way to provide this manifest is using the configuration file as shown in previous section. Kubelet ensures that the containers defined in the pods are started and continue running.
+
+Kubelet is a Kubernetes-internal concept and generally does not require direct manipulation. 
 
 An overview of Kubernetes showing the key components is shown:
 
 image::kubernetes-architecture.png[]
 
-*Label*: A label is a key/value pair that is attached to objects, such as pods. Multiple labels can be attached to a resource. Labels can be used to organize and to select subsets of objects. In the previous example
+=== Label
 
-*Replication Controller*: A replication controller ensures that a specified number of pod replicas are running on worker nodes at all times. It allows both up- and down-scaling the number of replicas. It also ensures recreation of pod when the worker node reboots or otherwise fails.
+A label is a key/value pair that is attached to objects, such as pods. Multiple labels can be attached to a resource. Labels can be used to organize and to select subsets of objects. In the previous example
+
+=== Replication Controller
+
+A replication controller ensures that a specified number of pod replicas are running on worker nodes at all times. It allows both up- and down-scaling the number of replicas. It also ensures recreation of pod when the worker node reboots or otherwise fails.
 
 A Replication Controller creating two instances of a Couchbase pod can be defined as:
 
@@ -79,7 +93,9 @@ spec:
         - containerPort: 8091
 ----
 
-*Service*: Each Pod is assigned a unique IP address. If the Pod is inside a Replication Controller then it is recreated but may be given a different IP address. This makes it difficult for an application server, such as WildFly, to access a database, such as Couchbase, using its IP address.
+=== Service
+
+Each Pod is assigned a unique IP address. If the Pod is inside a Replication Controller then it is recreated but may be given a different IP address. This makes it difficult for an application server, such as WildFly, to access a database, such as Couchbase, using its IP address.
 
 A Service defines a logical set of Pods and a policy by which to access them. IP address assigned to a Service does not change over time, and thus can be relied upon by other Pods. Typically the Pods belonging to a Service are defined by a Label Selector.
 
@@ -103,9 +119,58 @@ spec:
 
 Note that the labels used in `selector` must match the metadata used for creating the Pod by the Replication Controller.
 
-*Volumes*: 
+=== Volumes
 
-*Kubectl CLI*: `kubectl` is a command-line utility that controls the Kubernetes cluster. This utility can be used in the following format:
+A Volume is a directory on disk or in another container. A volume outlives any containers that run within the Pod, and data is preserved across Container restarts. The directory, the medium that backs it, and the contents of it are determined by the particular volume type used.
+
+Multiple types of volumes are supported. Some of the commonly used volume types are shown below:
+
+[options="header"]
+|====
+| Volume Type | Mounts into your pod
+| `hostPath` | A file or directory from the host node's filesystem
+| `nfs` | Existing Network File System share
+| `awsElasticBlockStore` | An Amazon Web Service EBS Volume
+| `gcePersistentDisk` | A Google Compute Engine Persistent Disk
+|====
+
+A Volume is specified in the Pod configuration file as shown:
+
+[source, text]
+----
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: couchbase-controller
+spec:
+  replicas: 1
+  # In-line template of the Pod
+  template:
+    metadata:
+      app: couchbase-rc-pod
+    spec:
+      containers:
+        - name: couchbase-rc-pod
+          image: arungupta/couchbase
+          ports:
+          - containerPort: 8091
+          volumeMounts:
+          # name must match the volume name below
+          - name: nfs
+            mountPath: /usr/share/couchbase
+      volumes:
+        - name: nfs
+          persistentVolumeClaim:
+            claimName: nfs
+----
+
+This configuration file also shows that Pod template can be specified inline.
+
+== Getting Started with Kubernetes
+
+=== Kubectl CLI
+
+`kubectl` is a command-line utility that controls the Kubernetes cluster. This utility can be used in the following format:
 
 `kubectl [command] [type] [name] [flags]`
 
@@ -124,17 +189,17 @@ Some examples of `kubectl` commands and their purpose:
 | `kubectl describe pod couchbase-pod` | Describe the Couchbase pod
 |====
 
-== Getting Started with Kubernetes
+=== Start the Cluster
 
-Vagrant
-Start the cluster
-Kubectl script
+Several options are available but the most common ones are Vagrant, Amazon Web Service (AWS) and Google Compute Engine (GCE).
 
-Several options are available but the most common ones are GCE, AWS, Azure
+==== Start the Cluster using Vagrant
 
-== Run your first Docker container
+==== Start the Cluster using AWS
 
-== Kubernetes Configuration File
+==== Start the Cluster using GCE
+
+== Run your first Container
 
 == Scale Applications
 
