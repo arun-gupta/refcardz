@@ -4,13 +4,15 @@
 
 toc::[]
 
+== What is Kubernetes?
+
 Kubernetes (http://kubernetes.io) is an open source orchestration system for managing containerized applications across multiple hosts, providing basic mechanisms for deployment, maintenance, and scaling of applications.
 
 Kubernetes, or "`k8s`" in short, allows the user to provide declarative primitives for the desired state, for example “need 3 Couchbase servers running”. Kubernetes self-healing mechanisms, such as auto-restarting, re-scheduling, and replicating containers then ensure that this state is met.
 
 Kubernetes supports Docker and Rocket containers, and other container image formats and container runtimes will be supported in the future.
 
-== Key Concepts
+== Key Concepts of Kubernetes
 
 === Cluster
 
@@ -203,9 +205,9 @@ Several options are available but the most common ones are Vagrant, Amazon Web S
 
 == Scale Applications
 
-== Connecting Containers using Service
+== Application using Multiple Containers
 
-== Volumes
+== Storing Data using Volumes
 
 == Health Check
 
