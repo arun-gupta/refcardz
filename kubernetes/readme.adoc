@@ -4,7 +4,7 @@
 
 toc::[]
 
-Kubernetes is an open source orchestration system for managing containerized applications across multiple hosts, providing basic mechanisms for deployment, maintenance, and scaling of applications.
+Kubernetes (http://kubernetes.io) is an open source orchestration system for managing containerized applications across multiple hosts, providing basic mechanisms for deployment, maintenance, and scaling of applications.
 
 Kubernetes, or "`k8s`" in short, allows the user to provide declarative primitives for the desired state, for example “need 3 Couchbase servers running”. Kubernetes self-healing mechanisms, such as auto-restarting, re-scheduling, and replicating containers then ensure that this state is met.
 
@@ -16,7 +16,7 @@ Kubernetes supports Docker and Rocket containers, and other container image form
 
 *Master*: A master is the central control point that provides a unified view of the cluster. Multiple masters can be setup to create a high-availability cluster.
 
-*Node* (nee "`minion`"): A node is worker node that run tasks as delegated by the master. Node can run one or more pods.
+*Worker* (nee "`minion`"): A node is worker node that run tasks as delegated by the master. Node can run one or more pods.
 
 *Pod*: A Pod is the smallest deployable units that can be created, scheduled, and managed. Its a logical collection of containers that belong to an application.
 
@@ -37,6 +37,14 @@ spec:
     ports:
     - containerPort: 8091
 ----
+
+*Kubelet*: Each node, master or worker, runs a service that allows to run containers and be managed from the master. It reads container manifests as YAML or JSON files that describes a Pod. Kubelet ensures that the containers defined in the pods are started and continue running.
+
+Kubelet is a Kubernetes-internal concept and generally does not require direct interaction.
+
+An overview of Kubernetes showing the key components is shown:
+
+image::kubernetes-architecture.png[]
 
 *Label*: A label is a key/value pair that is attached to objects, such as pods. Multiple labels can be attached to a resource. Labels can be used to organize and to select subsets of objects. In the previous example
 
@@ -95,15 +103,17 @@ spec:
 
 Note that the labels used in `selector` must match the metadata used for creating the Pod by the Replication Controller.
 
+*Volumes*: 
+
 *Kubectl CLI*: `kubectl` is a command-line utility that controls the Kubernetes cluster. This utility can be used in the following format:
 
 `kubectl [command] [type] [name] [flags]`
 
-`[command]` specifies the operation that needs to be performed on the resource. For example, `create`, `describe`, `delete`, or `scale`.
-`[type]` specifies the Kubernetes resource type. For example, `pod`, `service`, `replicationcontroller`, or `node`. Resource types are case-sensitive and you can specify the singular, plural, or abbreviated forms.
-`[name]` Specifies the name of the resource. Names are case-sensitive. If the name is omitted, details for all resources are displayed, for example `kubectl get pods`.
+- `[command]` specifies the operation that needs to be performed on the resource. For example, `create`, `describe`, `delete`, or `scale`.
+- `[type]` specifies the Kubernetes resource type. For example, `pod`, `service`, `replicationcontroller`, or `node`. Resource types are case-sensitive and you can specify the singular, plural, or abbreviated forms.
+- `[name]` Specifies the name of the resource. Names are case-sensitive. If the name is omitted, details for all resources are displayed, for example `kubectl get pods`	.
 
-Some examples of `kubectl`:
+Some examples of `kubectl` commands and their purpose:
 
 [options="header"]
 |====
