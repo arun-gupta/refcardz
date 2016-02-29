@@ -16,33 +16,103 @@ Kubernetes supports Docker and Rocket containers, and other container image form
 
 *Master*: A master is the central control point that provides a unified view of the cluster. Multiple masters can be setup to create a high-availability cluster.
 
-*Node* (nee "`minion`"): A node is a physical or virtual machine running Kubernetes, onto which pods can be scheduled.
+*Node* (nee "`minion`"): A node is worker node that run tasks as delegated by the master. Node can run one or more pods.
 
 *Pod*: A Pod is the smallest deployable units that can be created, scheduled, and managed. Its a logical collection of containers that belong to an application.
 
-Each resource in Kubernetes is defined using a configuration file. For example, a Couchbase pod might be defined as:
+Each resource in Kubernetes is defined using a configuration file. For example, a Couchbase pod can be defined as:
 
 [source, text]
 ----
 apiVersion: v1
 kind: Pod
+# labels attached to this Pod
 metadata:
-  name: couchbase
+  name: couchbase-pod
 spec:
   containers:
   - name: couchbase
+    # Docker image that will run in this Pod
     image: couchbase
     ports:
     - containerPort: 8091
 ----
 
-Replication Controller
+*Label*: A label is a key/value pair that is attached to objects, such as pods. Multiple labels can be attached to a resource. Labels can be used to organize and to select subsets of objects. In the previous example
 
-Service
+*Replication Controller*: A replication controller ensures that a specified number of pod replicas are running on worker nodes at all times. It allows both up- and down-scaling the number of replicas. It also ensures recreation of pod when the worker node reboots or otherwise fails.
 
-Label
+A Replication Controller creating two instances of a Couchbase pod can be defined as:
 
-Kubectl CLI
+[source, text]
+----
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: couchbase-controller
+spec:
+  # Two replicas of the Pod to be created
+  replicas: 2
+  # Identifies the label key and value on the Pod that
+  # this Replication Controller is responsible for managing
+  selector:
+    app: couchbase-rc-pod
+  # 'cookie cutter' used for creating new pods when necessary
+  template:
+    metadata:
+      labels:
+        # label key and value on the pod. These must match the selector above.
+        app: couchbase-rc-pod
+    spec:
+      containers:
+      - name: couchbase
+        image: couchbase
+        ports:
+        - containerPort: 8091
+----
+
+*Service*: Each Pod is assigned a unique IP address. If the Pod is inside a Replication Controller then it is recreated but may be given a different IP address. This makes it difficult for an application server, such as WildFly, to access a database, such as Couchbase, using its IP address.
+
+A Service defines a logical set of Pods and a policy by which to access them. IP address assigned to a Service does not change over time, and thus can be relied upon by other Pods. Typically the Pods belonging to a Service are defined by a Label Selector.
+
+For example, a Couchbase service might be defined as:
+
+[source, text]
+----
+apiVersion: v1
+kind: Service
+metadata: 
+  name: couchbase-service
+  labels: 
+    app: couchbase-service-pod
+spec: 
+  ports:
+    - port: 8091
+  # label keys and values of the Pod started elsewhere
+  selector: 
+    app: couchbase-rc-pod
+----
+
+Note that the labels used in `selector` must match the metadata used for creating the Pod by the Replication Controller.
+
+*Kubectl CLI*: `kubectl` is a command-line utility that controls the Kubernetes cluster. This utility can be used in the following format:
+
+`kubectl [command] [type] [name] [flags]`
+
+`[command]` specifies the operation that needs to be performed on the resource. For example, `create`, `describe`, `delete`, or `scale`.
+`[type]` specifies the Kubernetes resource type. For example, `pod`, `service`, `replicationcontroller`, or `node`. Resource types are case-sensitive and you can specify the singular, plural, or abbreviated forms.
+`[name]` Specifies the name of the resource. Names are case-sensitive. If the name is omitted, details for all resources are displayed, for example `kubectl get pods`.
+
+Some examples of `kubectl`:
+
+[options="header"]
+|====
+| Command | Purpose
+| `kubectl create -f couchbase-pod.yml` | Create a Couchbase pod
+| `kubectl create -f couchbase-rc.yml` | Create a Couchbase Replication Controller
+| `kubectl get pods` | List all the pods
+| `kubectl describe pod couchbase-pod` | Describe the Couchbase pod
+|====
 
 == Getting Started with Kubernetes
 
