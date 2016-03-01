@@ -199,13 +199,34 @@ Latest Kubernetes release can be downloaded from https://github.com/kubernetes/k
 
 Alternatively the cluster can also be started as `curl -sS https://get.k8s.io | bash`.
 
-The `KUBERNETES_PROVIDER` environment variable defines which variant to use.
+The `KUBERNETES_PROVIDER` environment variable defines which variant to use. Cluster can be started as:
+
+[source, text]
+----
+./cluster/kube-up.sh
+----
+
+Additional worker nodes can be created by setting the environment variable `NUM_MINIONS`, for example:
+
+[source, text]
+----
+export NUM_MINIONS=6
+----
+
+Cluster can be shutdown as:
+
+[source, text]
+----
+./cluster/kube-down.sh
+----
+
+Variant specific configuration for Vagrant, Amazon, and Google are shown next.
 
 ==== Start the Cluster using Vagrant
 
 Running Kubernetes with Vagrant is an easy way run, develop and test on your local machine.
 
-Kubernetes cluster can be started as:
+Kubernetes cluster using Vagrant can be started as:
 
 [source, text]
 ----
@@ -224,13 +245,6 @@ master                    running (virtualbox)
 minion-1                  running (virtualbox)
 ----
 
-Additional worker nodes can be created by setting the environment variable `NUM_MINIONS`, for example:
-
-[source, text]
-----
-export NUM_MINIONS=3
-----
-
 By default, each VM is assigned 1GB memory. A different number can be assigned by setting `KUBERNETES_MEMORY` environment variable, for example:
 
 [source, text]
@@ -238,13 +252,44 @@ By default, each VM is assigned 1GB memory. A different number can be assigned b
 export KUBERNETES_MEMORY=2048
 ----
 
-Cluster can be shutdown using `./cluster/kube-down.sh` script.
-
-Complete instructions ro run and manage a Kubernetes cluster using Vagrant are available at: https://github.com/kubernetes/kubernetes/blob/master/docs/getting-started-guides/vagrant.md.
+Complete instructions ro run and manage a Kubernetes cluster using Vagrant are available at: http://kubernetes.io/v1.1/docs/getting-started-guides/vagrant.html.
 
 ==== Start the Cluster using AWS
 
+Running Kubernetes with AWS requires:
+
+- AWS account
+- Install and configure AWS CLI
+- AWS instance and profile with EC2 full access
+
+Set `KUBERNETES_PROVIDER` to `aws` as:
+
+[source, text]
+----
+export KUBERNETES_PROVIDER=aws
+----
+
+Start and configure the cluster as explained earlier.
+
+By default, the script will provision a new VPC and a 4 node Kubernetes cluster in `us-west-2a` (Oregon) with `t2.micro` instances running on Ubuntu. These, and other values, such as memory for Master and Worker node, can be configured in `cluster/aws/config-default.sh`.
+
 ==== Start the Cluster using GCE
+
+Running Kubernetes with GCE requires:
+
+- Google Cloud Platform account with billing enabled
+- Install and configure Google Cloud SDK as explained at http://kubernetes.io/v1.1/docs/getting-started-guides/gce.html
+
+Either unset `KUBERNETES_PROVIDER` or set it to `gce` as:
+
+[source, text]
+----
+export KUBERNETES_PROVIDER=gce
+----
+
+Start and configure the cluster as explained earlier.
+
+By default, the script will provision a single Master node and 4 Worker nodes in `us-central1-b` zone with `n1-standard-1` instances running on Debian. These, and other values, such as memory for Master and Worker node, can be configured in `cluster/gce/config-default.sh`.
 
 == Run your first Container
 
