@@ -62,7 +62,7 @@ image::kubernetes-architecture.png[]
 
 A label is a key/value pair that is attached to objects, such as pods. Multiple labels can be attached to a resource. Labels can be used to organize and to select subsets of objects. In the previous example
 
-=== Replication Controller
+=== Replication Controller (RC)
 
 A replication controller ensures that a specified number of pod replicas are running on worker nodes at all times. It allows both up- and down-scaling the number of replicas. It also ensures recreation of pod when the worker node reboots or otherwise fails.
 
@@ -191,6 +191,8 @@ Some examples of `kubectl` commands and their purpose:
 | `kubectl describe pod couchbase-pod` | Describe the Couchbase pod
 |====
 
+`kubectl --help` shows the complete list of available commands.
+
 === Start the Kubernetes Cluster
 
 Kubernetes cluster can be started in multiple ways. The most common ones are using Vagrant, Amazon Web Service (AWS), Google Compute Engine (GCE), and Azure. http://kubernetes.io/v1.1/docs/getting-started-guides/README.html provides complete details about different options.
@@ -293,15 +295,68 @@ By default, the script will provision a single Master node and 4 Worker nodes in
 
 == Run your first Container
 
+A Container can be started on Kubernetes cluster using `kubectl`. Easiest way is to specify the Docker image name to the `run` command:
+
+[source, text]
+----
+kubectl.sh run couchbase --image=arungupta/couchbase
+----
+
+This command will start a pre-configured Couchbase container in a Pod wrapped inside a Replication Controller. Status of this RC can be seen:
+
+[source, text]
+----
+kubectl.sh get rc
+CONTROLLER   CONTAINER(S)   IMAGE(S)              SELECTOR        REPLICAS   AGE
+couchbase    couchbase      arungupta/couchbase   run=couchbase   1          16s
+----
+
+Status of the Pod can be seen:
+
+[source, text]
+----
+kubectl.sh get po
+NAME              READY     STATUS    RESTARTS   AGE
+couchbase-0s8lx   1/1       Running   0          1m
+----
+
+Alternatively, the Container can also be started using the configuration file:
+
+[source, text]
+----
+kubectl.sh create -f couchbase-pod.yaml
+----
+
+The file `couchbase-pod.yaml` contains the Pod definition as explained earlier.
+
 == Scale Applications
 
+Pods in a RC can be scaled up and down:
+
+[source, text]
+----
+kubectl.sh scale --replicas=3 rc couchbase
+replicationcontroller "couchbase" scaled
+----
+
+Updated number of replicas can be seen:
+
+[source, text]
+----
+kubectl.sh get rc
+CONTROLLER   CONTAINER(S)   IMAGE(S)              SELECTOR        REPLICAS   AGE
+couchbase    couchbase      arungupta/couchbase   run=couchbase   3          3m
+----
+
+Note, the updated replicas is 3 here.
+
 == Application using Multiple Containers
+
+Typically applications consists of a "`frontend`" and a "`backend`". 
 
 == Storing Data using Volumes
 
 == Health Check
-
-== Debugging
 
 == About the Author
 
