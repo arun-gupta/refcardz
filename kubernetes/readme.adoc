@@ -62,7 +62,7 @@ image::kubernetes-architecture.png[]
 
 A label is a key/value pair that is attached to objects, such as pods. Multiple labels can be attached to a resource. Labels can be used to organize and to select subsets of objects. In the previous example
 
-=== Replication Controller (RC)
+=== Replication Controller
 
 A replication controller ensures that a specified number of pod replicas are running on worker nodes at all times. It allows both up- and down-scaling the number of replicas. It also ensures recreation of pod when the worker node reboots or otherwise fails.
 
@@ -99,7 +99,7 @@ spec:
 
 Each Pod is assigned a unique IP address. If the Pod is inside a Replication Controller then it is recreated but may be given a different IP address. This makes it difficult for an application server, such as WildFly, to access a database, such as Couchbase, using its IP address.
 
-A Service defines a logical set of Pods and a policy by which to access them. IP address assigned to a Service does not change over time, and thus can be relied upon by other Pods. Typically the Pods belonging to a Service are defined by a Label Selector.
+A Service defines a logical set of Pods and a policy by which to access them. IP address assigned to a Service does not change over time, and thus can be relied upon by other Pods. Typically the Pods belonging to a Service are defined by a label `selector`.
 
 For example, a Couchbase service might be defined as:
 
