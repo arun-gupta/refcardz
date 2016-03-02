@@ -362,9 +362,9 @@ The steps involved are:
 - *Start "`backend`" Service*: The Couchbase Service uses the `selector` to select the previously started Pods.
 - *Start "`frontend`" Replication Controller*: The WildFly Replication Controller should contain the `spec` for the WildFly pod. The Pod should include the application predeployed. This is typically done by extending WildFly's Docker image, copying the WAR file in `/opt/jboss/wildfly/standalone/deployments` directory, and creating a new Docker image. The application can connect to the database by discovering "`backend`" services using Environment Variables or DNS.
 
-== Storing Data using Volumes
-
 == Health Check
+
+
 
 == About the Author
 
