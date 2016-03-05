@@ -295,7 +295,7 @@ By default, the script will provision a single Master node and 4 Worker nodes in
 
 == Run your first Container
 
-A Container can be started on Kubernetes cluster using `kubectl`. Easiest way is to specify the Docker image name to the `run` command:
+A Container can be started on Kubernetes cluster using the `kubectl` script. Easiest way is to specify the Docker image name to the `run` command:
 
 [source, text]
 ----
@@ -348,7 +348,7 @@ CONTROLLER   CONTAINER(S)   IMAGE(S)              SELECTOR        REPLICAS   AGE
 couchbase    couchbase      arungupta/couchbase   run=couchbase   3          3m
 ----
 
-Note, the updated number of replicas is 3 here.
+Note, the updated number of replicas is 3 here. The image, `arungupta/couchbase` in this case, will need to ensure that the cluster can be formed using three indvidual instances.
 
 == Application using Multiple Containers
 
@@ -362,9 +362,99 @@ The steps involved are:
 - *Start "`backend`" Service*: The Couchbase Service uses the `selector` to select the previously started Pods.
 - *Start "`frontend`" Replication Controller*: The WildFly Replication Controller should contain the `spec` for the WildFly pod. The Pod should include the application predeployed. This is typically done by extending WildFly's Docker image, copying the WAR file in `/opt/jboss/wildfly/standalone/deployments` directory, and creating a new Docker image. The application can connect to the database by discovering "`backend`" services using Environment Variables or DNS.
 
+== Namespace, Resource Quotas, and Limits
+
+By default, all resources in Kubernetes cluster are created in a default namespace. A pod will run with unbounded CPU and memory requests/limits.
+
+A Kubernetes namespace allows to partition created resources into a logically named group. Resources created in one namespace are hidden from other namespaces. Each namespace provides:
+
+- a unique scope for resources to avoid name collisions
+- policies to ensure appropriate authority to trusted users
+- ability to specify constraints for resource consumption
+
+A new namespace can be created using the followig configuration file:
+
+[source, text]
+----
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: development
+  labels:
+    name: development
+----
+
+A replication controller in default namespace can be created:
+
+[source, text]
+----
+kubectl.sh create -f couchbase-rc.yml
+replicationcontroller "couchbase" created
+----
+
+A replication controller in this new namespace can be created:
+
+[source, text]
+----
+kubectl.sh --namespace=development create -f couchbase-rc.yml
+replicationcontroller "couchbase" created
+----
+
+List of replication controllers in all namespaces can be obtained:
+
+[source, text]
+----
+kubectl.sh get rc --all-namespaces
+NAMESPACE     CONTROLLER                       CONTAINER(S)           IMAGE(S)                                                SELECTOR                           REPLICAS   AGE
+default       couchbase                        couchbase              arungupta/couchbase                                     run=couchbase                      1          4m
+development   couchbase                        couchbase              arungupta/couchbase                                     run=couchbase                      1          2m
+----
+
+Specifying quota allows to restrict how much of cluster resources can be consumed across all pods in a namespace.
+
+Resource quota can be specified using a configuration file:
+
+[source, text]
+----
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: quota
+spec:
+  hard:
+    cpu: "20"
+    memory: 1Gi
+    pods: "10"
+    replicationcontrollers: "20"
+    resourcequotas: "1"
+    services: "5"
+----
+
+Now a pod can be created specifying the limits:
+
+[source, text]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: couchbase-pod
+spec:
+  containers:
+  - name: couchbase
+    image: couchbase
+    ports:
+    - containerPort: 8091
+    resources:
+      limits:
+        cpu: "1"
+        memory: 512Mi
+----
+
+Namespace, resource quota and limits allows a Kubernetes cluster to share resources by multiple groups and provide different levels of QoS for each group.
+
 == Health Check
 
-
+A periodic health check of the application
 
 == About the Author
 
