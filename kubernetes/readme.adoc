@@ -331,7 +331,7 @@ The file `couchbase-pod.yaml` contains the Pod definition as explained earlier.
 
 == Scale Applications
 
-Pods in a RC can be scaled up and down:
+Pods in a replication controller can be scaled up and down:
 
 [source, text]
 ----
@@ -361,6 +361,7 @@ The steps involved are:
 - *Start "`backend`" Replication Controller*: The Couchbase Replication Controller should contain the `spec` for Couchbase Pod. The `template` should include `metadata` that will be used by the Service.
 - *Start "`backend`" Service*: The Couchbase Service uses the `selector` to select the previously started Pods.
 - *Start "`frontend`" Replication Controller*: The WildFly Replication Controller should contain the `spec` for the WildFly pod. The Pod should include the application predeployed. This is typically done by extending WildFly's Docker image, copying the WAR file in `/opt/jboss/wildfly/standalone/deployments` directory, and creating a new Docker image. The application can connect to the database by discovering "`backend`" services using Environment Variables or DNS.
+
 
 == Namespace, Resource Quotas, and Limits
 
@@ -451,10 +452,6 @@ spec:
 ----
 
 Namespace, resource quota and limits allows a Kubernetes cluster to share resources by multiple groups and provide different levels of QoS for each group.
-
-== Health Check
-
-A periodic health check of the application
 
 == About the Author
 
