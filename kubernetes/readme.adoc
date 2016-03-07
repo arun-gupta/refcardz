@@ -60,6 +60,8 @@ spec:
     - containerPort: 8091
 ----
 
+Each pod is assigned a unique IP address in the cluster.
+
 === Label
 
 A label is a key/value pair that is attached to objects, such as pods. Multiple labels can be attached to a resource. Labels can be used to organize and to select subsets of objects. In the previous example
@@ -170,6 +172,8 @@ spec:
 
 This configuration file also shows that Pod template can be specified inline.
 
+Complete list of volume types is explained at: http://kubernetes.io/v1.1/docs/user-guide/volumes.html.
+
 == Getting Started with Kubernetes
 
 === Kubectl CLI
@@ -277,9 +281,9 @@ Start and configure the cluster as explained earlier.
 
 By default, the script will provision a new VPC and a 4 node Kubernetes cluster in `us-west-2a` (Oregon) with `t2.micro` instances running on Ubuntu. These, and other values, such as memory for Master and Worker node, can be configured in `cluster/aws/config-default.sh`.
 
-==== Start the Cluster using GCE
+==== Start the Cluster using Google Cloud
 
-Running Kubernetes with GCE requires:
+Running Kubernetes with Google Cloud requires:
 
 - Google Cloud Platform account with billing enabled
 - Install and configure Google Cloud SDK as explained at http://kubernetes.io/v1.1/docs/getting-started-guides/gce.html
