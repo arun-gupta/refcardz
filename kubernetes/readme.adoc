@@ -12,7 +12,7 @@ Kubernetes, or "`k8s`" in short, allows the user to provide declarative primitiv
 
 Kubernetes supports Docker and Rocket containers, and other container image formats and container runtimes will be supported in the future.
 
-== Key Concepts of Kubernetes
+== Main Components of Kubernetes
 
 === Cluster
 
@@ -25,6 +25,18 @@ A Node is a physical or virtual machine. It has the necessary services to run ap
 A Master Node is the central control point that provides a unified view of the cluster. Multiple masters can be setup to create a high-availability cluster.
 
 A Worker Node run tasks as delegated by the master. Worker node can run one or more pods.
+
+=== Kubelet
+
+Kubelet is a service running on each Node that allows to run containers and be managed from the master. This service reads container manifests as YAML or JSON files that describes a Pod. A typical way to provide this manifest is using the configuration file as shown in the previous section. Kubelet ensures that the containers defined in the Pods are started and continue running.
+
+Kubelet is a Kubernetes-internal concept and generally does not require direct manipulation. 
+
+An overview of Kubernetes showing the key components is shown:
+
+image::kubernetes-architecture.png[]
+
+== Key Concepts of Kubernetes
 
 === Pod
 
@@ -47,16 +59,6 @@ spec:
     ports:
     - containerPort: 8091
 ----
-
-=== Kubelet
-
-Kubelet is a service running on each Node that allows to run containers and be managed from the master. This service reads container manifests as YAML or JSON files that describes a Pod. A typical way to provide this manifest is using the configuration file as shown in the previous section. Kubelet ensures that the containers defined in the Pods are started and continue running.
-
-Kubelet is a Kubernetes-internal concept and generally does not require direct manipulation. 
-
-An overview of Kubernetes showing the key components is shown:
-
-image::kubernetes-architecture.png[]
 
 === Label
 
